@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="a0955c1c-2346-40f1-bbed-1cdb8aa5614d" name="identifier.sqlite Mapping">
+      <data-sources db="c949ed10-7ebf-407c-ba9e-2e0c98d9e447" ddl="d58181c6-1687-48cc-8a2e-7a8318c7702c" />
+    </mapping>
+  </component>
+</project>

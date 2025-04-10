@@ -1,3 +1,6 @@
+using BikeShare.Core.Utils;
+using Microsoft.Data.Sqlite;
+
 namespace BikeShare.Core;
 
 public class Program
@@ -6,7 +9,17 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // test db connection
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+            Console.WriteLine("Database connection successful.");
+        }
+        
         // Injection here
+        builder.Services.AddSingleton<DbConnection>(_ =>
+            new DbConnection(builder.Configuration.GetConnectionString("DefaultConnection")!));
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
