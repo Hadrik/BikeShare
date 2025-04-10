@@ -1,8 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikeShare.Web", "BikeShare.Web\BikeShare.Web.csproj", "{A26EC9B0-160A-4016-83F4-0EB78A877816}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikeShare.Desktop", "BikeShare.Desktop\BikeShare.Desktop.csproj", "{7D9895BE-DC94-433C-8489-FFFA9D1C8034}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BikeShare.Core", "BikeShare.Core\BikeShare.Core.csproj", "{B06E0A70-C86E-4AE2-9911-522A11FC8E89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A26EC9B0-160A-4016-83F4-0EB78A877816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A26EC9B0-160A-4016-83F4-0EB78A877816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A26EC9B0-160A-4016-83F4-0EB78A877816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A26EC9B0-160A-4016-83F4-0EB78A877816}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D9895BE-DC94-433C-8489-FFFA9D1C8034}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D9895BE-DC94-433C-8489-FFFA9D1C8034}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D9895BE-DC94-433C-8489-FFFA9D1C8034}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D9895BE-DC94-433C-8489-FFFA9D1C8034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06E0A70-C86E-4AE2-9911-522A11FC8E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06E0A70-C86E-4AE2-9911-522A11FC8E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06E0A70-C86E-4AE2-9911-522A11FC8E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06E0A70-C86E-4AE2-9911-522A11FC8E89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
