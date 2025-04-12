@@ -16,6 +16,7 @@ public class AuthController(AuthService auth) : Controller
         return View(new LoginViewModel { ReturnUrl = returnUrl });
     }
 
+    [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
         if (!ModelState.IsValid)
@@ -24,7 +25,7 @@ public class AuthController(AuthService auth) : Controller
         var user = await auth.ValidateUserAsync(model.Username, model.Password);
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "Invalid username or password");
+            ModelState.AddModelError(nameof(LoginViewModel.Username), "Invalid username or password");
             return View(model);
         }
 

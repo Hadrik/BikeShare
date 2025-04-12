@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 SqlMapper.AddTypeHandler(new DateTimeToUnixHandler());
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddControllersWithViews();
 

@@ -10,9 +10,9 @@ public class AuthService(DatabaseService db)
         using var connection = db.CreateConnection();
         
         var user = await connection.QuerySingleOrDefaultAsync<User>(
-            "SELECT * FROM Users WHERE username = @Username", 
+            "SELECT user_id, role_id, username, email, password_hash FROM Users WHERE username = @Username", 
             new { Username = username });
-            
+
         if (user == null)
             return null;
             

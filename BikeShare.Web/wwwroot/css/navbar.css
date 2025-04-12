@@ -1,0 +1,17 @@
+﻿.navbar-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+.navbar-container > .nav-home {
+    color: #0dcaf0;
+    align-content: center;
+}
+
+.navbar-container > .nav-right {
+    align-self: flex-end;
+    
+}
