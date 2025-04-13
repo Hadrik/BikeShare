@@ -66,9 +66,9 @@ public class AuthController(AuthService auth) : Controller
 
         try
         {
-            var user = await auth.RegisterUserAsync(model.Email, model.Username, model.Password);
+            _ = await auth.RegisterUserAsync(model.Email, model.Username, model.Password);
 
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Auth", new { returnUrl = "/" });
         }
         catch (Exception e)
         {

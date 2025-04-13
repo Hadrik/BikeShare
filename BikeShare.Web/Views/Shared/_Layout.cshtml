@@ -5,43 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - BikeShare</title>
     <script type="importmap"></script>
+    <link rel="stylesheet" href="~/css/vars.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/navbar.css" />
+    @RenderSection("Styles", required: false)
 </head>
 <body>
 
-<header>
-    <nav class="navbar">
-        <div class="navbar-container">
+@if (ViewData["HideNav"] == null || (bool)ViewData["HideNav"]! == false)
+{
+    <header>
+        <nav class="navbar">
             <a class="nav-home" asp-area="" asp-controller="Home" asp-action="Index">BikeShare</a>
 
-            
+
             <div style="flex-grow: 1"></div>
+            <div class="nav-user">
             @if (User.Identity!.IsAuthenticated)
             {
-                <div class="nav-user">
-                    <span class="nav-username">@User.Identity.Name</span>
-                    <form asp-action="Logout" method="POST">
-                        <button class="nav-logout" type="submit">Log out</button>
-                    </form>
-                </div>
+                <span class="nav-username">@User.Identity.Name</span>
+                <form asp-controller="Auth" asp-action="Logout" method="POST">
+                    <button type="submit">Log out</button>
+                </form>
             }
             else
             {
-                <form>
-                    <button class="nav-login" type="submit" asp-controller="Auth" asp-action="Login">Log in</button>
+                <form asp-controller="Auth" asp-action="Login">
+                    <button type="submit">Log in</button>
                 </form>
             }
-            
-        </div>
-    </nav>
-</header>
+            </div>
+        </nav>
+    </header>
+}
 
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+<main role="main">
+    @RenderBody()
+</main>
 
 @* <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
 @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
