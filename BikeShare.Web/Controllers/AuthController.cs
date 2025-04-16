@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers;
 
-[Controller]
 public class AuthController(AuthService auth) : Controller
 {
     [HttpGet]

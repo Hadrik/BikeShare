@@ -31,7 +31,7 @@ public record Bike
     public int? StationId { get; set; }
     
     [Column("status")]
-    public required string Status { get; set; }
+    public BikeStatus Status { get; set; }
     
     [Column("last_status_change")]
     public DateTime LastUpdated { get; set; }
@@ -83,7 +83,7 @@ public record StatusHistory
     public int? StationId { get; set; }
     
     [Column("status")]
-    public required string Status { get; set; }
+    public BikeStatus Status { get; set; }
     
     [Column("timestamp")]
     public DateTime Timestamp { get; set; }
@@ -135,5 +135,46 @@ public class DateTimeToUnixHandler : SqlMapper.TypeHandler<DateTime>
     {
         var unixTime = Convert.ToInt64(value);
         return DateTimeOffset.FromUnixTimeSeconds(unixTime).DateTime;
+    }
+}
+
+// https://stackoverflow.com/questions/37264655/dapper-and-enums-as-strings
+public struct BikeStatus
+{
+    string _value;
+
+    public static BikeStatus Available => "Available";
+    public static BikeStatus Maintenance => "Maintenance";
+    public static BikeStatus InUse => "InUse";
+
+    private BikeStatus(string value)
+    {
+        _value = value;
+    }
+
+    public static implicit operator BikeStatus(string value)
+    {
+        return new BikeStatus(value);
+    }
+
+    public static implicit operator string(BikeStatus country)
+    {
+        return country._value;
+    }
+}
+
+public class BikeStatusHandler : SqlMapper.ITypeHandler
+{
+    public void SetValue(IDbDataParameter parameter, object value)
+    {
+        parameter.DbType = DbType.String;
+        parameter.Value = (string)((dynamic)value);
+    }
+
+    public object? Parse(Type destinationType, object value)
+    {
+        if (destinationType == typeof(BikeStatus))
+            return (BikeStatus)((string)value);
+        return null;
     }
 }

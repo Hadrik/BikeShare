@@ -1,0 +1,18 @@
+﻿@section Scripts
+{
+    <script src="js/station.js"></script>
+}
+
+<h1>
+    @ViewBag.Station.Name
+</h1>
+
+<ol>
+    @foreach (var bike in ViewBag.Bikes)
+    {
+        <li>
+            <span>@bike.Id</span>
+            <span>@bike.Status</span>
+        </li>
+    }
+</ol>

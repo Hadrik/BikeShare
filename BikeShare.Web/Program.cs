@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 SimpleCRUD.SetDialect(SimpleCRUD.Dialect.SQLite);
 SqlMapper.AddTypeHandler(new DateTimeToUnixHandler());
+SqlMapper.AddTypeHandler(typeof(BikeStatus), new BikeStatusHandler());
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddControllersWithViews();
