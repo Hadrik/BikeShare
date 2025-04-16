@@ -14,13 +14,15 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<DatabaseService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<StationService>();
+builder.Services.AddScoped<BikeService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Auth/Login";
         options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.AccessDeniedPath = "/Auth/Login";
         options.SlidingExpiration = true;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
