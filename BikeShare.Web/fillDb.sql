@@ -25,11 +25,11 @@ create table if not exists Bikes
     bike_id            integer not null
         constraint Bikes_pk
             primary key autoincrement,
-    station_id         integer not null
+    station_id         integer
         constraint Bikes_Stations_station_id_fk
             references Stations,
     status             text    not null,
-    last_status_change integer not null
+    last_status_change text    not null
 );
 
 create table if not exists StatusHistory
@@ -44,7 +44,7 @@ create table if not exists StatusHistory
         constraint StatusHistory_Stations_station_id_fk
             references Stations,
     status            text    not null,
-    timestamp         integer not null
+    timestamp         text    not null
 );
 
 create table if not exists Users
@@ -81,9 +81,8 @@ create table if not exists Rentals
     end_station_id   integer
         constraint Rentals_Stations_station_id_fk_2
             references Stations,
-    start_timestamp  integer not null,
-    end_timestamp    integer,
-    distance         integer,
+    start_timestamp  text    not null,
+    end_timestamp    text,
     cost             integer
 );
 
@@ -96,19 +95,19 @@ INSERT INTO Stations(station_id, name, location_lat, location_long) VALUES (2, '
 INSERT INTO Stations(station_id, name, location_lat, location_long) VALUES (3, 'University Dock', 18.15784904716084, 49.83622505389712);
 
 -- Insert bikes
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (1, 1, 'Available', 1744808542);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (1, 1, 'Available', '2025-04-23 17:15:41.5784414');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (2, 1, 'Available', 1744705042);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (2, 1, 'Available', '2025-03-12 10:55:41.6742467');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (3, 2, 'Maintenance', 1744708361);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (3, null, 'Maintenance', '2025-04-06 11:12:52.9563531');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (4, 2, 'Available', 1744564520);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (4, 2, 'Available', '2025-01-29 09:00:31.5784414');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (5, 3, 'InUse', 1743354920);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (5, null, 'InUse', '2025-02-15 14:30:41.6742467');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (6, 3, 'Available', 1743541641);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (6, 3, 'Available', '2025-03-20 08:45:41.6742467');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (7, 3, 'Available', 1743714441);
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (7, 3, 'Available', '2025-04-10 12:00:41.6742467');
 
 -- Insert roles
 INSERT INTO Roles(role_id, name, permissions) VALUES (1, 'Admin', 1);

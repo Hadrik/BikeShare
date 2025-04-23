@@ -30,9 +30,7 @@
             }
             else
             {
-                <form asp-controller="Auth" asp-action="Login">
-                    <button type="submit">Log in</button>
-                </form>
+                <button onclick="window.location = '@Url.Action("Login", "Auth")'" >Login</button>
             }
             </div>
         </nav>

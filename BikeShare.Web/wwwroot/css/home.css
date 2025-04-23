@@ -1,6 +1,6 @@
 ﻿#map {
-    height: 400px;
-    width: 400px;
+    height: var(--full-height);
+    width: 100vw;
 }
 
 

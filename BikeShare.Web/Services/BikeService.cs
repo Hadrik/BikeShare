@@ -1,4 +1,5 @@
-﻿using BikeShare.Web.Models;
+﻿using System.Data;
+using BikeShare.Web.Models;
 using Dapper;
 
 namespace BikeShare.Web.Services;
@@ -17,41 +18,73 @@ public class BikeService(DatabaseService db)
         return await connection.GetAsync<Bike>(id);
     }
 
-    public async Task<bool> UpdateStatus(int id, BikeStatus status)
+    /// <summary>
+    /// Updates the status of a bike and saves the history. Optionally updates the station ID.
+    /// </summary>
+    /// <param name="id">Bike ID</param>
+    /// <param name="status">New Status</param>
+    /// <param name="stationId">New Station ID. <c>-1</c> for no update</param>
+    /// <param name="insertionTime">Custom timestamp. Uses <c>DateTime.UtcNow;</c> if <c>null</c></param>
+    /// <param name="transaction">Use existing transaction</param>
+    /// <returns><c>bool</c> - success</returns>
+    public async Task<bool> UpdateStatus(int id, string status, int? stationId = -1, DateTime? insertionTime = null, IDbTransaction? transaction = null)
     {
-        using var connection = db.CreateConnection();
-        using var t = connection.BeginTransaction();
-        var time = DateTime.UtcNow;
-        
-        var bike = await connection.GetAsync<Bike>(id, transaction: t);
-        if (bike == null)
+        var connection = transaction?.Connection ?? db.CreateConnection();
+        var t = transaction ?? connection.BeginTransaction();
+        var now = insertionTime ?? DateTime.UtcNow;
+
+        try
         {
-            return false;
+            var bike = await connection.GetAsync<Bike>(id, t);
+
+            if (bike.Status == status && (stationId == -1 || bike.StationId == stationId))
+            {
+                // No change, no need to update
+                if (transaction == null)
+                {
+                    t.Commit();
+                    connection.Dispose();
+                }
+
+                return true;
+            }
+
+            if (stationId != -1)
+            {
+                bike.StationId = stationId;
+            }
+
+            bike.Status = status;
+            bike.LastUpdated = now;
+            
+            await connection.UpdateAsync(bike, t);
+
+            var sh = new StatusHistory
+            {
+                BikeId = id,
+                StationId = bike.StationId,
+                Status = status,
+                Timestamp = now
+            };
+            await connection.InsertAsync(sh, t);
+
+            if (transaction == null)
+            {
+                t.Commit();
+                connection.Dispose();
+            }
+
+            return true;
         }
-        bike.Status = status;
-        bike.LastUpdated = time;
-        var rows = await connection.UpdateAsync(bike, transaction: t);
-        if (rows == 0)
+        catch (Exception e)
         {
-            t.Rollback();
-            return false;
+            if (transaction == null)
+            {
+                t.Rollback();
+                connection.Dispose();
+            }
+            throw new Exception("Failed to update bike status", e);
         }
-        
-        var history = await connection.InsertAsync(new StatusHistory
-        {
-            BikeId = id,
-            StationId = bike.StationId,
-            Status = status,
-            Timestamp = time
-        }, transaction: t);
-        if (history == null)
-        {
-            t.Rollback();
-            return false;
-        }
-        
-        t.Commit();
-        return true;
     }
     
     public async Task<StatusHistory[]> GetStatusHistory(int id)

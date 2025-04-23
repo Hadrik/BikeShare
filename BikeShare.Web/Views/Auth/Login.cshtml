@@ -11,6 +11,12 @@
 <div class="form">
     <h1 class="title">Login</h1>
     <h2 class="subtitle">Log in to your account.</h2>
+    @if (ViewBag.Error != null)
+    {
+        <h3>
+            @ViewBag.Error
+        </h3>
+    }
 
     <form asp-action="Login" method="POST">
         <div>

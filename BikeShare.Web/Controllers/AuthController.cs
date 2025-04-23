@@ -24,7 +24,7 @@ public class AuthController(AuthService auth) : Controller
         var user = await auth.ValidateUserAsync(model.Username, model.Password);
         if (user == null)
         {
-            ModelState.AddModelError(nameof(LoginViewModel.Username), "Invalid username or password");
+            ViewBag.Error = "Invalid username or password";
             return View(model);
         }
 

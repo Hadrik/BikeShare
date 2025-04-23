@@ -27,7 +27,7 @@ public class ApiBikeController(BikeService service) : ControllerBase
     }
     
     [HttpPut("{id:int}/status")]
-    public async Task<IActionResult> UpdateStatus(int id, [FromBody] BikeStatus status)
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
     {
         if (!ModelState.IsValid)
         {

@@ -1,0 +1,13 @@
+﻿### Start
+POST localhost:5289/api/rentals/start
+Content-Type: application/x-www-form-urlencoded
+
+UserId = 1 &
+StationId = 3
+
+### End
+POST localhost:5289/api/rentals/end
+Content-Type: application/x-www-form-urlencoded
+
+RentalId = 1 &
+StationId = 2

@@ -1,4 +1,4 @@
-﻿let map = L.map('map').setView([49.83429254048945, 18.161536490538477], 13);
+﻿let map = L.map('map').setView([49.83429254048945, 18.161536490538477], 16);
 
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
@@ -11,9 +11,21 @@ async function fillMap() {
 
     for (let station of stationsData) {
         let marker = L.marker([station.Latitude, station.Longitude]).addTo(map);
-        marker.bindPopup(`<b>${station.Name}</b>`);
+        
+        marker.bindPopup(`
+            <div>
+                <h1>${station.Name}</h1>
+                <p>Bikes: <span id="bikes-${station.Id}">loading...</span></p>
+            </div>
+        `);
+        
+        marker.on('popupopen', async () => {
+            let bikesResp = await fetch(`api/stations/${station.Id}/bikes`);
+            document.getElementById(`bikes-${station.Id}`).innerText = await bikesResp.json();
+        });
+        
         marker.on('click', () => {
-            window.location.href = `Station/${station.Id}`;
+            map.panTo(marker.getLatLng());
         });
     }
 }

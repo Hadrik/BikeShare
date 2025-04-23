@@ -33,6 +33,6 @@ public class ApiStationController(StationService service) : ControllerBase
     {
         var bikes = await service.GetBikesAtStation(id);
 
-        return Ok(JsonSerializer.Serialize(bikes));
+        return Ok(bikes);
     }
 }

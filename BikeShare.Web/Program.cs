@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 var builder = WebApplication.CreateBuilder(args);
 
 SimpleCRUD.SetDialect(SimpleCRUD.Dialect.SQLite);
-SqlMapper.AddTypeHandler(new DateTimeToUnixHandler());
-SqlMapper.AddTypeHandler(typeof(BikeStatus), new BikeStatusHandler());
+// SqlMapper.AddTypeHandler(new DateTimeToUnixHandler());
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddControllersWithViews();
@@ -17,6 +16,7 @@ builder.Services.AddSingleton<DatabaseService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StationService>();
 builder.Services.AddScoped<BikeService>();
+builder.Services.AddScoped<RentalService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
