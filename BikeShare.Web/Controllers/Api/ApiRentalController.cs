@@ -1,4 +1,5 @@
-﻿using BikeShare.Web.Services;
+﻿using System.Security.Claims;
+using BikeShare.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
@@ -26,6 +27,21 @@ public class ApiRentalController(RentalService service) : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+    [HttpPost("start/{id:int}")]
+    public async Task<IActionResult> Start(int id)
+    {
+        int userId;
+        try
+        {
+            userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("User not found");
+        }
+        return await Start(new StartRentalRequest {StationId = id, UserId = userId});
+    }
     
     public class EndRentalRequest
     {
@@ -49,5 +65,27 @@ public class ApiRentalController(RentalService service) : ControllerBase
         {
             return Problem(e.Message);
         }
+    }
+    
+    [HttpPost("end/{id:int}")]
+    public async Task<IActionResult> End(int id)
+    {
+        int userId;
+        try
+        {
+            userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("User not found");
+        }
+        
+        var rentalId = await service.GetRentalOfUser(userId);
+        if (rentalId == null)
+        {
+            return BadRequest("User has no active rental");
+        }
+        
+        return await End(new EndRentalRequest {RentalId = rentalId.Value, StationId = id});
     }
 }

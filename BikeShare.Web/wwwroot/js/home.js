@@ -16,17 +16,39 @@ async function fillMap() {
             <div>
                 <h1>${station.Name}</h1>
                 <p>Bikes: <span id="bikes-${station.Id}">loading...</span></p>
+                <button id="bikes-${station.Id}-btn" disabled onclick="rent(${station.Id})">Rent a bike</button>
             </div>
         `);
         
         marker.on('popupopen', async () => {
             let bikesResp = await fetch(`api/stations/${station.Id}/bikes`);
-            document.getElementById(`bikes-${station.Id}`).innerText = await bikesResp.json();
+            let numberOfBikes = await bikesResp.text();
+            document.getElementById(`bikes-${station.Id}`).innerText = numberOfBikes;
+            let button = document.getElementById(`bikes-${station.Id}-btn`);
+            if (numberOfBikes > 0) {
+                button.disabled = false;
+                button.innerText = 'Rent a bike';
+            } else {
+                button.disabled = true;
+                button.innerText = 'No bikes available';
+            }
         });
         
         marker.on('click', () => {
             map.panTo(marker.getLatLng());
         });
+    }
+}
+
+async function rent(stationId) {
+    let resp = await fetch(`api/rentals/start/${stationId}`, {
+        method: 'POST'
+    });
+    if (resp.ok) {
+        let rental = await resp.json();
+        alert(`Rental started! Rental ID: ${rental.Id}`);
+    } else {
+        alert(`Failed to start rental. ${await resp.text()}`);
     }
 }
 
