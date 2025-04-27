@@ -17,6 +17,12 @@ public class RentalService(DatabaseService db, BikeService bikeService)
         using var connection = db.CreateConnection();
         var now = DateTime.UtcNow;
         
+        var active = await connection.QuerySingleOrDefaultAsync<int>(
+            "SELECT rental_id FROM Rentals WHERE user_id = @userId AND end_timestamp IS NULL",
+            new { userId });
+        if (active != 0)
+            throw new Exception("User already has an active rental");
+        
         var bike = await connection.QuerySingleOrDefaultAsync<int>(
             "SELECT bike_id FROM Bikes WHERE station_id = @stationId AND status = @status ORDER BY RANDOM() LIMIT 1",
             new { stationId, status = "Available" });

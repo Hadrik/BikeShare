@@ -28,11 +28,14 @@ public class AuthController(AuthService auth) : Controller
             return View(model);
         }
 
+        var role = await auth.GetUserRoleNameAsync(user.RoleId);
+
         var claims = new List<Claim>
         {
             new (ClaimTypes.Name, user.Username),
             new (ClaimTypes.Email, user.Email),
-            new (ClaimTypes.NameIdentifier, user.Id.ToString())
+            new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Role, role)
         };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);

@@ -8,6 +8,12 @@ namespace BikeShare.Web.Controllers.Api;
 [Route("api/rentals")]
 public class ApiRentalController(RentalService service) : ControllerBase
 {
+    [HttpGet("{userId:int}")]
+    public async Task<IActionResult> Active(int userId)
+    {
+        return Ok(await service.GetRentalOfUser(userId));
+    }
+    
     public class StartRentalRequest
     {
         public int UserId { get; set; }
@@ -34,12 +40,15 @@ public class ApiRentalController(RentalService service) : ControllerBase
         int userId;
         try
         {
-            userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null) throw new Exception("User ID not found");
+            userId = int.Parse(claim.Value);
         }
         catch (Exception e)
         {
             return BadRequest("User not found");
         }
+        
         return await Start(new StartRentalRequest {StationId = id, UserId = userId});
     }
     

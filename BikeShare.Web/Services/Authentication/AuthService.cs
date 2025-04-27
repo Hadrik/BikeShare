@@ -8,10 +8,14 @@ public class AuthService(DatabaseService db)
     public async Task<User?> ValidateUserAsync(string username, string password)
     {
         using var connection = db.CreateConnection();
-        
-        var user = await connection.QuerySingleOrDefaultAsync<User>(
-            "SELECT user_id, role_id, username, email, password_hash FROM Users WHERE username = @Username", 
-            new { Username = username });
+
+        var users = (await connection.GetListAsync<User>("WHERE username = @username", new { username })).ToArray();
+        if (users.Length != 1)
+        {
+            return null;
+        }
+
+        var user = users[0];
 
         if (user == null)
             return null;

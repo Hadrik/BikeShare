@@ -3,6 +3,7 @@ using BikeShare.Web.Services;
 using BikeShare.Web.Services.Authentication;
 using Dapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.ExpireTimeSpan = TimeSpan.FromDays(7);
     });
+
+builder.Services.Configure<AuthorizationOptions>(options =>
+{
+    options.AddPolicy("Admin", p => p.Requirements.Add(new AdminRequirement()));
+    options.AddPolicy("User", p => p.Requirements.Add(new UserRequirement()));
+});
 
 var app = builder.Build();
 
