@@ -1,0 +1,33 @@
+﻿@model AccountViewModel
+
+@{
+    ViewData["Title"] = "Account";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/account.css" />
+}
+
+<!DOCTYPE html>
+
+<div class="top">
+    <h1 class="username">@Model.Username</h1>
+    <form asp-controller="Auth" asp-action="Logout" method="post"><button type="submit">Log out</button></form>
+</div>
+<div class="rental">
+    @if (Model.CurrentRental == null)
+    {
+        <h1 class="rental-none">No active rental</h1>
+    }
+    else
+    {
+        <div class="detail-item">
+            <h3 class="detail-header">From station</h3>
+            <h2 class="detail-content">@Model.StartStation.Name</h2>
+        </div>
+        <div class="detail-item">
+            <h3 class="detail-header">Started at</h3>
+            <h2 class="detail-content">@Model.CurrentRental.StartTimestamp.ToString("dd/MM HH:mm")</h2>
+        </div>
+    }
+</div>

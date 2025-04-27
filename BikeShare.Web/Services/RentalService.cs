@@ -93,12 +93,12 @@ public class RentalService(DatabaseService db, BikeService bikeService)
         t.Commit();
     }
 
-    public async Task<int?> GetRentalOfUser(int userId)
+    public async Task<Rental?> GetRentalOfUser(int userId)
     {
         var connection = db.CreateConnection();
         var rental = await connection.QuerySingleOrDefaultAsync<Rental>(
-            "SELECT * FROM Rentals WHERE user_id = @userId AND end_timestamp IS NULL",
+            "SELECT rental_id AS Id, user_id, bike_id, start_station_id, end_station_id, start_timestamp, end_timestamp, cost FROM Rentals WHERE user_id = @userId AND end_timestamp IS NULL",
             new { userId });
-        return rental?.Id;
+        return rental;
     }
 }

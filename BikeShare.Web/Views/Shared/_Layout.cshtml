@@ -23,14 +23,11 @@
             <div class="nav-user">
             @if (User.Identity!.IsAuthenticated)
             {
-                <span class="nav-username">@User.Identity.Name</span>
-                <form asp-controller="Auth" asp-action="Logout" method="POST">
-                    <button type="submit">Log out</button>
-                </form>
+                <span class="nav-username" onclick="window.location = '@Url.Action("Index", "Account")'">@User.Identity.Name</span>
             }
             else
             {
-                <button onclick="window.location = '@Url.Action("Login", "Auth")'" >Login</button>
+                <button onclick="window.location = '@Url.Action("Login", "Auth")'" >Log in</button>
             }
             </div>
         </nav>

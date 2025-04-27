@@ -1,0 +1,54 @@
+﻿:root {
+    --view-width: 600px;
+}
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: var(--view-width);
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.username {
+    font-weight: bold;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.rental {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: var(--view-width);
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+.rental-none {
+    color: var(--text-color);
+    font-size: 1.2em;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-header {
+    color: var(--text-color);
+    font-size: 0.9em;
+    margin: 5px
+}
+
+.detail-content {
+    color: var(--text-color);
+    font-size: 1.2em;
+    margin: 8px;
+}

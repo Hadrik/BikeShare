@@ -6,10 +6,14 @@ L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 let stations;
+let activeRental = false;
 
 async function fillMap() {
     let stationsRaw = await fetch('api/stations');
     stations = await stationsRaw.json();
+    
+    let activeRentalResp = await fetch('api/rentals/active');
+    if (activeRentalResp.status === 200) activeRental = true;
 
     for (let station of stations) {
         let marker = L.marker([station.Latitude, station.Longitude]).addTo(map);
@@ -34,12 +38,19 @@ let refreshPopup = async (stationId) => {
     let numberOfBikes = await bikesResp.text();
     document.getElementById(`bikes-${stationId}`).innerText = numberOfBikes;
     let button = document.getElementById(`bikes-${stationId}-btn`);
-    if (numberOfBikes > 0) {
+    
+    if (activeRental) {
         button.disabled = false;
-        button.innerText = 'Rent a bike';
+        button.innerText = 'Return bike';
+        button.onclick = () => returnBike(stationId);
     } else {
-        button.disabled = true;
-        button.innerText = 'No bikes available';
+        if (numberOfBikes > 0) {
+            button.disabled = false;
+            button.innerText = 'Rent a bike';
+        } else {
+            button.disabled = true;
+            button.innerText = 'No bikes available';
+        }
     }
 }
 
@@ -51,7 +62,21 @@ async function rent(stationId) {
         alert(`Failed to start rental. ${await resp.text()}`);
         return;
     }
+    // TODO: Success message
+    activeRental = true;
     await refreshPopup(stationId);
+}
+
+async function returnBike(stationId) {
+    let resp = await fetch(`api/rentals/end/${stationId}`, {
+        method: 'POST'
+    });
+    if (!resp.ok) {
+        alert(`Failed to return bike. ${await resp.text()}`);
+        return;
+    }
+    activeRental = false;
+    refreshPopup(stationId);
 }
 
 fillMap();

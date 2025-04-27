@@ -8,9 +8,26 @@ namespace BikeShare.Web.Controllers.Api;
 [Route("api/rentals")]
 public class ApiRentalController(RentalService service) : ControllerBase
 {
-    [HttpGet("{userId:int}")]
+    [HttpGet("active/{userId:int}")]
     public async Task<IActionResult> Active(int userId)
     {
+        return Ok(await service.GetRentalOfUser(userId));
+    }
+
+    [HttpGet("active")]
+    public async Task<IActionResult> Active()
+    {
+        int userId;
+        try
+        {
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (claim == null) return BadRequest("User ID not found");
+            userId = int.Parse(claim.Value);
+        }
+        catch (Exception e)
+        {
+            return BadRequest("User not found");
+        }
         return Ok(await service.GetRentalOfUser(userId));
     }
     
@@ -34,14 +51,14 @@ public class ApiRentalController(RentalService service) : ControllerBase
         }
     }
 
-    [HttpPost("start/{id:int}")]
-    public async Task<IActionResult> Start(int id)
+    [HttpPost("start/{stationId:int}")]
+    public async Task<IActionResult> Start(int stationId)
     {
         int userId;
         try
         {
             var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (claim == null) throw new Exception("User ID not found");
+            if (claim == null) return BadRequest("User ID not found");
             userId = int.Parse(claim.Value);
         }
         catch (Exception e)
@@ -49,7 +66,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
             return BadRequest("User not found");
         }
         
-        return await Start(new StartRentalRequest {StationId = id, UserId = userId});
+        return await Start(new StartRentalRequest {StationId = stationId, UserId = userId});
     }
     
     public class EndRentalRequest
@@ -76,8 +93,8 @@ public class ApiRentalController(RentalService service) : ControllerBase
         }
     }
     
-    [HttpPost("end/{id:int}")]
-    public async Task<IActionResult> End(int id)
+    [HttpPost("end/{stationId:int}")]
+    public async Task<IActionResult> End(int stationId)
     {
         int userId;
         try
@@ -89,12 +106,12 @@ public class ApiRentalController(RentalService service) : ControllerBase
             return BadRequest("User not found");
         }
         
-        var rentalId = await service.GetRentalOfUser(userId);
-        if (rentalId == null)
+        var rental = await service.GetRentalOfUser(userId);
+        if (rental == null)
         {
             return BadRequest("User has no active rental");
         }
         
-        return await End(new EndRentalRequest {RentalId = rentalId.Value, StationId = id});
+        return await End(new EndRentalRequest {RentalId = rental.Id!.Value, StationId = stationId});
     }
 }
