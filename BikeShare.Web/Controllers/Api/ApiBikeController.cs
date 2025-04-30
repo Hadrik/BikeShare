@@ -11,7 +11,7 @@ public class ApiBikeController(BikeService service) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        return Ok(await service.GetAllBikes());
+        return new JsonResult(await service.GetAllBikes());
     }
     
     [HttpGet("{id:int}")]
@@ -23,7 +23,7 @@ public class ApiBikeController(BikeService service) : ControllerBase
             return NotFound();
         }
 
-        return Ok(bike);
+        return new JsonResult(bike);
     }
     
     [HttpPut("{id:int}/status")]
@@ -46,6 +46,6 @@ public class ApiBikeController(BikeService service) : ControllerBase
     [HttpGet("{id:int}/status")]
     public async Task<IActionResult> GetStatusHistory(int id)
     {
-        return Ok(await service.GetStatusHistory(id));
+        return new JsonResult(await service.GetStatusHistory(id));
     }
 }

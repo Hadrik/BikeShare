@@ -11,6 +11,12 @@
 <div class="form">
     <h1 class="title">Register</h1>
     <h2 class="subtitle">Create a new account.</h2>
+    @if (ViewBag.Error != null)
+    {
+        <h3>
+            @ViewBag.Error
+        </h3>
+    }
     
     <form asp-action="Register" method="POST">
         <div>

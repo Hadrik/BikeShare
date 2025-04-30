@@ -103,7 +103,7 @@ INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (3, nu
 
 INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (4, 2, 'Available', '2025-01-29 09:00:31.5784414');
 
-INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (5, null, 'InUse', '2025-02-15 14:30:41.6742467');
+INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (5, 3, 'Available', '2025-02-15 14:30:41.6742467');
 
 INSERT INTO Bikes(bike_id, station_id, status, last_status_change) VALUES (6, 3, 'Available', '2025-03-20 08:45:41.6742467');
 
@@ -115,10 +115,13 @@ INSERT INTO Roles(role_id, name, permissions) VALUES (1, 'Admin', 1);
 INSERT INTO Roles(role_id, name, permissions) VALUES (2, 'User', 0);
 
 -- Insert users
+-- User for desktop app - Username: '!' Password: '!'
+INSERT INTO Users(user_id, role_id, email, password_hash, username) VALUES (1, 1, 'email@of.admin', '$2a$11$l8SAu0FMp9hVxY9hPzT6se1srbCWJ8iFY/Ule1pHrJhzV5PvXGwJW', '!');
+
 -- Password: adminadmin
-INSERT INTO Users(user_id, role_id, email, password_hash, username) VALUES (1, 1, 'admin@admin.admin', '$2a$11$bKKX4dxvz0SufVftvpU5SO9/N1MjQXwCg83ZWLx7Dxl2mIIvU.ZrC', 'admin');
+INSERT INTO Users(user_id, role_id, email, password_hash, username) VALUES (2, 1, 'admin@admin.admin', '$2a$11$bKKX4dxvz0SufVftvpU5SO9/N1MjQXwCg83ZWLx7Dxl2mIIvU.ZrC', 'admin');
 
 -- Password: useruser
-INSERT INTO Users(user_id, role_id, email, password_hash, username) VALUES (2, 2, 'user@user.user', '$2a$11$nnVaMi9v3e/oGPy1X4FiIec8gABYzT/cqLRcX06mElvCi1Im6eBO2', 'user');
+INSERT INTO Users(user_id, role_id, email, password_hash, username) VALUES (3, 2, 'user@user.user', '$2a$11$nnVaMi9v3e/oGPy1X4FiIec8gABYzT/cqLRcX06mElvCi1Im6eBO2', 'user');
 
 COMMIT;

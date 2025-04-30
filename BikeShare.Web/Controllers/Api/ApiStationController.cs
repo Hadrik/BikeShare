@@ -12,9 +12,7 @@ public class ApiStationController(StationService service) : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var stations = await service.GetAllStationInfo();
-
-        return Ok(JsonSerializer.Serialize(stations));
+        return new JsonResult(await service.GetAllStationInfo());
     }
     
     [HttpGet("{id:int}")]
@@ -26,14 +24,12 @@ public class ApiStationController(StationService service) : ControllerBase
             return NotFound();
         }
 
-        return Ok(JsonSerializer.Serialize(station));
+        return new JsonResult(station);
     }
     
     [HttpGet("{id:int}/bikes")]
     public async Task<IActionResult> GetBikesAtStation(int id)
     {
-        var bikes = await service.GetBikesAtStation(id);
-
-        return Ok(bikes);
+        return Ok(await service.GetBikesAtStation(id));
     }
 }

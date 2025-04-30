@@ -3,7 +3,7 @@ using Dapper;
 
 namespace BikeShare.Web.Services;
 
-public class RentalService(DatabaseService db, BikeService bikeService)
+public class RentalService(DatabaseService db, BikeService bikeService, CostService costService)
 {
     /// <summary>
     /// Starts a new rental. Assigns a random bike.
@@ -54,7 +54,7 @@ public class RentalService(DatabaseService db, BikeService bikeService)
     }
     
     /// <summary>
-    /// Finishes a rental. Updates the bike status and rental end time.
+    /// Finishes a rental. Updates the bike status, rental end time and cost.
     /// </summary>
     /// <param name="rentalId">ID of rental to finalize</param>
     /// <param name="stationId">End station ID</param>
@@ -82,6 +82,7 @@ public class RentalService(DatabaseService db, BikeService bikeService)
         
         rental.EndStationId = stationId;
         rental.EndTimestamp = now;
+        rental.Cost = costService.CalculateCost(rental.StartTimestamp, rental.EndTimestamp.Value);
         
         var rows = await connection.UpdateAsync(rental, t);
         if (rows == 0)

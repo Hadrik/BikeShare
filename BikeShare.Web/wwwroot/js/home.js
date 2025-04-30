@@ -9,26 +9,25 @@ let stations;
 let activeRental = false;
 
 async function fillMap() {
-    let stationsRaw = await fetch('api/stations');
-    stations = await stationsRaw.json();
+    let stations = await(await fetch('api/stations')).json();
     
-    let activeRentalResp = await fetch('api/rentals/active');
-    if (activeRentalResp.status === 200) activeRental = true;
+    let rental = await(await fetch('api/rentals/active')).json();
+    if (rental) activeRental = true;
 
     for (let station of stations) {
-        let marker = L.marker([station.Latitude, station.Longitude]).addTo(map);
+        let marker = L.marker([station.latitude, station.longitude]).addTo(map);
         
         marker.bindPopup(`
             <div>
-                <h1>${station.Name}</h1>
-                <p>Bikes: <span id="bikes-${station.Id}">loading...</span></p>
-                <button id="bikes-${station.Id}-btn" disabled onclick="rent(${station.Id})">Rent a bike</button>
+                <h1>${station.name}</h1>
+                <p>Bikes: <span id="bikes-${station.id}">loading...</span></p>
+                <button id="bikes-${station.id}-btn" disabled onclick="rent(${station.id})">Rent a bike</button>
             </div>
         `);
         
         marker.on('click', () => {
             map.panTo(marker.getLatLng());
-            refreshPopup(station.Id);
+            refreshPopup(station.id);
         });
     }
 }

@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 var builder = WebApplication.CreateBuilder(args);
 
 SimpleCRUD.SetDialect(SimpleCRUD.Dialect.SQLite);
-// SqlMapper.AddTypeHandler(new DateTimeToUnixHandler());
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<DatabaseService>();
+builder.Services.AddSingleton<CostService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StationService>();
 builder.Services.AddScoped<BikeService>();

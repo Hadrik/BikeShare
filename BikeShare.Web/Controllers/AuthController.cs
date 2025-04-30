@@ -74,7 +74,7 @@ public class AuthController(AuthService auth) : Controller
         }
         catch (Exception e)
         {
-            ModelState.AddModelError(string.Empty, e.Message);
+            ViewBag.Error = e.Message;
             return View(model);
         }
     }

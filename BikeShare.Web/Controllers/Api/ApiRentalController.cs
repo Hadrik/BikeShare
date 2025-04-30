@@ -11,7 +11,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     [HttpGet("active/{userId:int}")]
     public async Task<IActionResult> Active(int userId)
     {
-        return Ok(await service.GetRentalOfUser(userId));
+        return new JsonResult(await service.GetRentalOfUser(userId));
     }
 
     [HttpGet("active")]
@@ -28,7 +28,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
         {
             return BadRequest("User not found");
         }
-        return Ok(await service.GetRentalOfUser(userId));
+        return new JsonResult(await service.GetRentalOfUser(userId));
     }
     
     public class StartRentalRequest

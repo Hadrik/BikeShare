@@ -17,19 +17,15 @@
     <header>
         <nav class="navbar">
             <a class="nav-home" asp-area="" asp-controller="Home" asp-action="Index">BikeShare</a>
-
-
-            <div style="flex-grow: 1"></div>
-            <div class="nav-user">
+            
             @if (User.Identity!.IsAuthenticated)
             {
-                <span class="nav-username" onclick="window.location = '@Url.Action("Index", "Account")'">@User.Identity.Name</span>
+                <a class="nav-username" asp-area="" asp-controller="Account" asp-action="Index">@User.Identity.Name</a>
             }
             else
             {
                 <button onclick="window.location = '@Url.Action("Login", "Auth")'" >Log in</button>
             }
-            </div>
         </nav>
     </header>
 }
@@ -38,9 +34,6 @@
     @RenderBody()
 </main>
 
-@* <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
-@* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
-@* <script src="~/js/site.js" asp-append-version="true"></script> *@
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
