@@ -46,7 +46,19 @@ public class BikeService(DatabaseService db)
                     connection.Dispose();
                 }
 
-                return true;
+                return false;
+            }
+
+            if (bike.Status == "InUse")
+            {
+                // Bike is in use, cannot change status
+                if (transaction == null)
+                {
+                    t.Commit();
+                    connection.Dispose();
+                }
+
+                return false;
             }
 
             if (stationId != -1)

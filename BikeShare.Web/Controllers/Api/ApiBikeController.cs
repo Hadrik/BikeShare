@@ -1,5 +1,6 @@
 ﻿using BikeShare.Web.Models;
 using BikeShare.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
@@ -26,6 +27,7 @@ public class ApiBikeController(BikeService service) : ControllerBase
         return new JsonResult(bike);
     }
     
+    [Authorize("Admin")]
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
     {
@@ -34,13 +36,15 @@ public class ApiBikeController(BikeService service) : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var result = await service.UpdateStatus(id, status);
-        if (!result)
+        try
         {
-            return NotFound();
+            _ = await service.UpdateStatus(id, status);
+            return NoContent();
         }
-
-        return NoContent();
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
     
     [HttpGet("{id:int}/status")]

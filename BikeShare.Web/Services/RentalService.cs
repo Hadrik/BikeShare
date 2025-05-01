@@ -72,12 +72,15 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
             t.Rollback();
             throw new KeyNotFoundException("No rental found");
         }
-        
-        var bikeSuccess = await bikeService.UpdateStatus(rental.BikeId, "Available", stationId, now, t);
-        if (!bikeSuccess)
+
+        try
+        {
+            await bikeService.UpdateStatus(rental.BikeId, "Available", stationId, now, t);
+        }
+        catch (Exception ex)
         {
             t.Rollback();
-            throw new Exception("Failed to update bike status");
+            throw new Exception("Failed to update bike status", ex);
         }
         
         rental.EndStationId = stationId;
