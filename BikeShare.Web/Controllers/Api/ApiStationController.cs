@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
 
+[AllowAnonymous]
 [ApiController]
 [Route("api/stations")]
 public class ApiStationController(StationService service) : ControllerBase

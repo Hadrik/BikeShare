@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using BikeShare.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
@@ -13,6 +14,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// </summary>
     /// <param name="userId">User ID</param>
     /// <returns>Rental or null</returns>
+    [Authorize(Policy = "Admin")]
     [HttpGet("active/{userId:int}")]
     public async Task<IActionResult> Active(int userId)
     {
@@ -22,7 +24,8 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// <summary>
     /// Get active rental of the logged-in user
     /// </summary>
-    /// <returns>Rental or null</returns>
+    /// <returns>Rental or null or 400-BadRequest</returns>
+    [Authorize(Policy = "User")]
     [HttpGet("active")]
     public async Task<IActionResult> Active()
     {
@@ -51,6 +54,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// </summary>
     /// <param name="request">{UserId, StationId}</param>
     /// <returns>201-Created or 400-BadRequest</returns>
+    [Authorize(Policy = "AdminOrApp")]
     [HttpPost("start")]
     public async Task<IActionResult> Start(StartRentalRequest request)
     {
@@ -70,6 +74,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// </summary>
     /// <param name="stationId">Start Station ID</param>
     /// <returns>201-Created or 400-BadRequest</returns>
+    [Authorize(Policy = "User")]
     [HttpPost("start/{stationId:int}")]
     public async Task<IActionResult> Start(int stationId)
     {
@@ -99,6 +104,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// </summary>
     /// <param name="request">{RentalId, StationId}</param>
     /// <returns>204-NoContent or 400-BadRequest with error message</returns>
+    [Authorize(Policy = "AdminOrApp")]
     [HttpPost("end")]
     public async Task<IActionResult> End(EndRentalRequest request)
     {
@@ -118,6 +124,7 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// </summary>
     /// <param name="stationId">End Station ID</param>
     /// <returns>204-NoContent or 400-BadRequest with error message</returns>
+    [Authorize(Policy = "User")]
     [HttpPost("end/{stationId:int}")]
     public async Task<IActionResult> End(int stationId)
     {

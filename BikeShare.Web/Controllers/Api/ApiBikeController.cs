@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
 
+[Authorize(Policy = "AdminOrApp")]
 [ApiController]
 [Route("api/bikes")]
 public class ApiBikeController(BikeService service) : ControllerBase
@@ -40,9 +41,8 @@ public class ApiBikeController(BikeService service) : ControllerBase
     /// Manually update the status of a bike (usually used for maintenance)
     /// </summary>
     /// <param name="id">Bike ID</param>
-    /// <param name="status">New bike status</param>
+    /// <param name="status">[FromBody] New bike status</param>
     /// <returns>204-NoContent if update was successful or 400-BadRequest with error message</returns>
-    [Authorize("Admin")]
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
     {

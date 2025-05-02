@@ -1,4 +1,5 @@
 ﻿using BikeShare.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
@@ -7,6 +8,8 @@ namespace BikeShare.Web.Controllers.Api;
 [Route("api")]
 public class ApiOverviewController(ReflectionService service) : ControllerBase
 {
+    [AllowAnonymous]
+    [HttpGet]
     public IActionResult Index()
     {
         var apiOverview = service.GetApiOverview();

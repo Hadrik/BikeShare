@@ -32,6 +32,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.Configure<AuthorizationOptions>(options =>
 {
+    options.AddPolicy("AdminOrApp", p => p.Requirements.Add(new AdminOrAppRequirement()));
     options.AddPolicy("Admin", p => p.Requirements.Add(new AdminRequirement()));
     options.AddPolicy("User", p => p.Requirements.Add(new UserRequirement()));
 });

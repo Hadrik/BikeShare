@@ -3,11 +3,26 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BikeShare.Web.Services.Authentication;
 
-public class AdminRequirement : IAuthorizationHandler, IAuthorizationRequirement
+public class AdminOrAppRequirement : IAuthorizationHandler, IAuthorizationRequirement
 {
     public async Task HandleAsync(AuthorizationHandlerContext context)
     {
         if (AuthorizationHelper.IsAdmin(context))
+        {
+            context.Succeed(this);
+        }
+        else
+        {
+            context.Fail();
+        }
+    }
+}
+
+public class AdminRequirement : IAuthorizationHandler, IAuthorizationRequirement
+{
+    public async Task HandleAsync(AuthorizationHandlerContext context)
+    {
+        if (AuthorizationHelper.IsAdminViaRole(context.User))
         {
             context.Succeed(this);
         }
