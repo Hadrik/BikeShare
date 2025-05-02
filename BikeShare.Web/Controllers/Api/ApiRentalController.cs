@@ -4,16 +4,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
 
-[Controller]
+[ApiController]
 [Route("api/rentals")]
 public class ApiRentalController(RentalService service) : ControllerBase
 {
+    /// <summary>
+    /// Get active rental of a user from user ID
+    /// </summary>
+    /// <param name="userId">User ID</param>
+    /// <returns>Rental or null</returns>
     [HttpGet("active/{userId:int}")]
     public async Task<IActionResult> Active(int userId)
     {
         return new JsonResult(await service.GetRentalOfUser(userId));
     }
 
+    /// <summary>
+    /// Get active rental of the logged-in user
+    /// </summary>
+    /// <returns>Rental or null</returns>
     [HttpGet("active")]
     public async Task<IActionResult> Active()
     {
@@ -37,6 +46,11 @@ public class ApiRentalController(RentalService service) : ControllerBase
         public int StationId { get; set; }
     }
     
+    /// <summary>
+    /// Start a new rental
+    /// </summary>
+    /// <param name="request">{UserId, StationId}</param>
+    /// <returns>201-Created or 400-BadRequest</returns>
     [HttpPost("start")]
     public async Task<IActionResult> Start(StartRentalRequest request)
     {
@@ -51,6 +65,11 @@ public class ApiRentalController(RentalService service) : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Start a new rental for the logged-in user
+    /// </summary>
+    /// <param name="stationId">Start Station ID</param>
+    /// <returns>201-Created or 400-BadRequest</returns>
     [HttpPost("start/{stationId:int}")]
     public async Task<IActionResult> Start(int stationId)
     {
@@ -75,6 +94,11 @@ public class ApiRentalController(RentalService service) : ControllerBase
         public int StationId { get; set; }
     }
     
+    /// <summary>
+    /// End a rental
+    /// </summary>
+    /// <param name="request">{RentalId, StationId}</param>
+    /// <returns>204-NoContent or 400-BadRequest with error message</returns>
     [HttpPost("end")]
     public async Task<IActionResult> End(EndRentalRequest request)
     {
@@ -83,16 +107,17 @@ public class ApiRentalController(RentalService service) : ControllerBase
             await service.FinishRental(request.RentalId, request.StationId);
             return NoContent();
         }
-        catch (KeyNotFoundException e)
+        catch (Exception e)
         {
             return BadRequest(e.Message);
         }
-        catch (Exception e)
-        {
-            return Problem(e.Message);
-        }
     }
     
+    /// <summary>
+    /// End a rental for the logged-in user
+    /// </summary>
+    /// <param name="stationId">End Station ID</param>
+    /// <returns>204-NoContent or 400-BadRequest with error message</returns>
     [HttpPost("end/{stationId:int}")]
     public async Task<IActionResult> End(int stationId)
     {

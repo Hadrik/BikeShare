@@ -3,43 +3,62 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BikeShare.Web.Services.Authentication;
 
-public class AdminRequirement : IAuthorizationHandler, IAuthorizationRequirement 
+public class AdminRequirement : IAuthorizationHandler, IAuthorizationRequirement
 {
-    private const string AdminKeyHeader = "X-Admin-Key";
-    private const string AdminKeyValue = "12345";
-    
     public async Task HandleAsync(AuthorizationHandlerContext context)
     {
-        var roleClaim = context.User.FindFirst(ClaimTypes.Role);
-        var isAdminViaRole = roleClaim != null && roleClaim.Value == "Admin";
-        
-        var isAdminViaHeader = context.Resource is HttpContext httpContext &&
-            httpContext.Request.Headers.TryGetValue(AdminKeyHeader, out var headerValue) &&
-            headerValue.FirstOrDefault() == AdminKeyValue;
-        
-        if (isAdminViaHeader || isAdminViaRole)
+        if (AuthorizationHelper.IsAdmin(context))
         {
             context.Succeed(this);
         }
-        else 
-        { 
-            context.Fail(); 
+        else
+        {
+            context.Fail();
         }
     }
 }
 
-public class UserRequirement : IAuthorizationHandler, IAuthorizationRequirement 
+public class UserRequirement : IAuthorizationHandler, IAuthorizationRequirement
 {
     public async Task HandleAsync(AuthorizationHandlerContext context)
     {
-        var roleClaim = context.User.FindFirst(ClaimTypes.Role);
-        if (roleClaim != null && roleClaim.Value == "User")
+        if (AuthorizationHelper.IsUser(context) || AuthorizationHelper.IsAdmin(context))
         {
             context.Succeed(this);
         }
-        else 
-        { 
-            context.Fail(); 
+        else
+        {
+            context.Fail();
         }
+    }
+}
+
+public static class AuthorizationHelper
+{
+    private const string AdminKeyHeader = "X-Admin-Key";
+    private const string AdminKeyValue = "12345";
+
+    public static bool IsAdminViaRole(ClaimsPrincipal user)
+    {
+        var roleClaim = user.FindFirst(ClaimTypes.Role);
+        return roleClaim != null && roleClaim.Value == "Admin";
+    }
+
+    public static bool IsAdminViaHeader(AuthorizationHandlerContext context)
+    {
+        return context.Resource is HttpContext httpContext &&
+               httpContext.Request.Headers.TryGetValue(AdminKeyHeader, out var headerValue) &&
+               headerValue.FirstOrDefault() == AdminKeyValue;
+    }
+
+    public static bool IsAdmin(AuthorizationHandlerContext context)
+    {
+        return IsAdminViaRole(context.User) || IsAdminViaHeader(context);
+    }
+    
+    public static bool IsUser(AuthorizationHandlerContext context)
+    {
+        var roleClaim = context.User.FindFirst(ClaimTypes.Role);
+        return roleClaim != null && roleClaim.Value == "User";
     }
 }

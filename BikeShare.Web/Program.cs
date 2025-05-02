@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddSingleton<DatabaseService>();
 builder.Services.AddSingleton<CostService>();
+builder.Services.AddSingleton<ReflectionService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<StationService>();
 builder.Services.AddScoped<BikeService>();

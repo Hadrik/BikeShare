@@ -5,16 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BikeShare.Web.Controllers.Api;
 
-[Controller]
+[ApiController]
 [Route("api/bikes")]
 public class ApiBikeController(BikeService service) : ControllerBase
 {
+    /// <summary>
+    /// Get deatils af all bikes
+    /// </summary>
+    /// <returns>Bike array</returns>
     [HttpGet]
     public async Task<IActionResult> Index()
     {
         return new JsonResult(await service.GetAllBikes());
     }
     
+    /// <summary>
+    /// Get details of a specific bike
+    /// </summary>
+    /// <param name="id">Bike ID</param>
+    /// <returns>Bike details or 404-NotFound</returns>
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetBike(int id)
     {
@@ -27,6 +36,12 @@ public class ApiBikeController(BikeService service) : ControllerBase
         return new JsonResult(bike);
     }
     
+    /// <summary>
+    /// Manually update the status of a bike (usually used for maintenance)
+    /// </summary>
+    /// <param name="id">Bike ID</param>
+    /// <param name="status">New bike status</param>
+    /// <returns>204-NoContent if update was successful or 400-BadRequest with error message</returns>
     [Authorize("Admin")]
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
@@ -47,6 +62,11 @@ public class ApiBikeController(BikeService service) : ControllerBase
         }
     }
     
+    /// <summary>
+    /// Get the status history of a bike
+    /// </summary>
+    /// <param name="id">Bike ID</param>
+    /// <returns>StatusHistory array</returns>
     [HttpGet("{id:int}/status")]
     public async Task<IActionResult> GetStatusHistory(int id)
     {
