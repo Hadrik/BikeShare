@@ -9,13 +9,71 @@ public class BikeService(DatabaseService db)
     public async Task<Bike[]> GetAllBikes()
     {
         using var connection = db.CreateConnection();
-        return (await connection.GetListAsync<Bike>()).ToArray();
+        var bikes = await connection.GetListAsync<Bike>();
+        return bikes.Where(b => b.Status != "Deleted").ToArray();
     }
     
     public async Task<Bike?> GetBike(int id)
     {
         using var connection = db.CreateConnection();
-        return await connection.GetAsync<Bike>(id);
+        var bike = await connection.GetAsync<Bike>(id);
+        return bike?.Status == "Deleted" ? null : bike;
+    }
+
+    public async Task AddBike(string status, int? stationId = null)
+    {
+        using var connection = db.CreateConnection();
+        using var t = connection.BeginTransaction();
+
+        try
+        {
+            if (stationId == -1) stationId = null;
+            var bike = new Bike
+            {
+                Status = status,
+                LastUpdated = DateTime.UtcNow,
+                StationId = stationId
+            };
+            var id = await connection.InsertAsync(bike, t);
+            
+            var sh = new StatusHistory
+            {
+                BikeId = id!.Value,
+                StationId = bike.StationId,
+                Status = bike.Status,
+                Timestamp = bike.LastUpdated
+            };
+            await connection.InsertAsync(sh, t);
+            t.Commit();
+        }
+        catch (Exception e)
+        {
+            t.Rollback();
+            throw new Exception("Failed to add bike", e);
+        }
+    }
+
+    public async Task DeleteBike(int id)
+    {
+        using var connection = db.CreateConnection();
+        using var t = connection.BeginTransaction();
+
+        try
+        {
+            var bike = await connection.GetAsync<Bike>(id, t);
+            if (bike == null)
+            {
+                throw new KeyNotFoundException($"Bike with ID {id} not found.");
+            }
+
+            await UpdateStatus(id, "Deleted", transaction: t);
+            t.Commit();
+        }
+        catch (Exception e)
+        {
+            t.Rollback();
+            throw new Exception("Failed to delete bike", e);
+        }
     }
 
     /// <summary>
@@ -37,6 +95,17 @@ public class BikeService(DatabaseService db)
         {
             var bike = await connection.GetAsync<Bike>(id, t);
 
+            if (bike.Status == "Deleted")
+            {
+                // Bike is deleted, cannot update
+                if (transaction == null)
+                {
+                    t.Commit();
+                    connection.Dispose();
+                }
+                return false;
+            }
+
             if (bike.Status == status && (stationId == -1 || bike.StationId == stationId))
             {
                 // No change, no need to update
@@ -45,19 +114,17 @@ public class BikeService(DatabaseService db)
                     t.Commit();
                     connection.Dispose();
                 }
-
                 return false;
             }
 
-            if (bike.Status == "InUse")
+            if (bike.Status == "InUse" && status != "Available")
             {
-                // Bike is in use, cannot change status
+                // Bike is in use and can only be set to "Available"
                 if (transaction == null)
                 {
                     t.Commit();
                     connection.Dispose();
                 }
-
                 return false;
             }
 
@@ -102,6 +169,6 @@ public class BikeService(DatabaseService db)
     public async Task<StatusHistory[]> GetStatusHistory(int id)
     {
         using var connection = db.CreateConnection();
-        return (await connection.QueryAsync<StatusHistory>("SELECT * FROM StatusHistory WHERE bike_id = @id", new { id })).ToArray();
+        return (await connection.QueryAsync<StatusHistory>("SELECT status_history_id AS Id, bike_id, station_id, status, timestamp FROM StatusHistory WHERE bike_id = @id", new { id })).ToArray();
     }
 }

@@ -1,6 +1,7 @@
 ﻿let map = L.map('map').setView([49.83429254048945, 18.161536490538477], 16);
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+// https://tile.openstreetmap.org/{z}/{x}/{y}.png
+L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);

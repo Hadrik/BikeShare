@@ -1,0 +1,38 @@
+﻿<Window x:Class="BikeShare.Desktop.Views.BikeHistoryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:vm="clr-namespace:BikeShare.Desktop.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:BikeHistoryViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        Title="Bike History" Height="300" Width="450" MinHeight="200" MinWidth="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" TextAlignment="Right" VerticalAlignment="Center" FontWeight="Bold">Bike:</TextBlock>
+            <TextBlock Grid.Column="1" TextAlignment="Left" VerticalAlignment="Center" Text="{Binding Bike.Id}"/>
+        </Grid>
+        
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding History}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="30" Binding="{Binding Id}"/>
+                <DataGridTextColumn Header="Station ID" Width="70" Binding="{Binding StationId}"/>
+                <DataGridTextColumn Header="Status" Width="*" Binding="{Binding Status}"/>
+                <DataGridTextColumn Header="Timestamp" Width="170" Binding="{Binding TimeStamp}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Window>

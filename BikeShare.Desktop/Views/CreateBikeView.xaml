@@ -1,0 +1,60 @@
+﻿<Window x:Class="BikeShare.Desktop.Views.CreateBikeView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:converters="clr-namespace:BikeShare.Desktop.Converters"
+        xmlns:vm="clr-namespace:BikeShare.Desktop.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:CreateBikeViewModel, IsDesignTimeCreatable=True}"
+        mc:Ignorable="d"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        Title="Create Bike" Width="300">
+    <Window.Resources>
+        <converters:StringToIntConverter x:Key="StringToIntConverter"/>
+        <converters:StatusToStationIdInputEnabledConverter x:Key="StatusToStationIdInputEnabledConverter"/>
+    </Window.Resources>
+    <StackPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
+            
+            <TextBlock Grid.Column="0" Grid.Row="0" TextAlignment="Right" VerticalAlignment="Center">Status:</TextBlock>
+            <TextBlock Grid.Column="0" Grid.Row="1" TextAlignment="Right" VerticalAlignment="Center">Station ID:</TextBlock>
+            
+            <ComboBox Grid.Column="1" Grid.Row="0" Margin="10 10 10 5"
+                      ItemsSource="{Binding Statuses}"
+                      SelectedItem="{Binding SelectedStatus, Mode=TwoWay}" 
+                      IsTextSearchEnabled="False" 
+                      IsEditable="True" 
+                      Text="{Binding SelectedStatus}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            
+            <TextBox Grid.Column="1" Grid.Row="1" Margin="10 5 10 10"
+                     Text="{Binding SelectedStationId, Converter={StaticResource StringToIntConverter}}"
+                     IsEnabled="{Binding SelectedStatus, Converter={StaticResource StatusToStationIdInputEnabledConverter}}"/>
+        </Grid>
+        
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="80"/>
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="0" Command="{Binding CancelCommand}">Cancel</Button>
+            <Button Grid.Column="2" Command="{Binding SubmitCommand}">Submit</Button>
+        </Grid>
+    </StackPanel>
+</Window>

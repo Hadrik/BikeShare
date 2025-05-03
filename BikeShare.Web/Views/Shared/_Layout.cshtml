@@ -20,11 +20,11 @@
             
             @if (User.Identity!.IsAuthenticated)
             {
-                <a class="nav-username" asp-area="" asp-controller="Account" asp-action="Index">@User.Identity.Name</a>
+                <a class="nav-right nav-username" asp-area="" asp-controller="Account" asp-action="Index">@User.Identity.Name</a>
             }
             else
             {
-                <button onclick="window.location = '@Url.Action("Login", "Auth")'" >Log in</button>
+                <button class="nav-right" onclick="window.location = '@Url.Action("Login", "Auth")'" >Log in</button>
             }
         </nav>
     </header>

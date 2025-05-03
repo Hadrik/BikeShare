@@ -37,25 +37,21 @@ public class ApiBikeController(BikeService service) : ControllerBase
         return new JsonResult(bike);
     }
 
-    public class UpdateStatusRequest
+    public class BikeRequest
     {
         public string Status { get; set; } = string.Empty;
         public int? StationId { get; set; } = -1;
     }
+    
     /// <summary>
     /// Manually update the status of a bike (usually used for maintenance)
     /// </summary>
     /// <param name="id">Bike ID</param>
-    /// <param name="request">[FromBody] {Status, StationId}</param>
+    /// <param name="request">[FromBody] {Status, StationId?}</param>
     /// <returns>204-NoContent if update was successful or 400-BadRequest with error message</returns>
     [HttpPut("{id:int}/status")]
-    public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] BikeRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
         try
         {
             _ = await service.UpdateStatus(id, request.Status, request.StationId);
@@ -64,6 +60,44 @@ public class ApiBikeController(BikeService service) : ControllerBase
         catch (Exception e)
         {
             return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Add a new bike
+    /// </summary>
+    /// <param name="request">[FromBody] {Status, StationId?}</param>
+    /// <returns>200-Ok or 400-BadRequest with error message</returns>
+    [HttpPost]
+    public async Task<IActionResult> AddBike([FromBody] BikeRequest request)
+    {
+        try
+        {
+            await service.AddBike(request.Status, request.StationId);
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+    /// <summary>
+    /// Delete a bike
+    /// </summary>
+    /// <param name="id">Bike ID</param>
+    /// <returns>200-Ok or 404-NotFound for invalid ID</returns>
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteBike(int id)
+    {
+        try
+        {
+            await service.DeleteBike(id);
+            return Ok();
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
         }
     }
     

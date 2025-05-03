@@ -10,7 +10,11 @@ namespace BikeShare.Desktop
     {
         private static readonly HttpClient Client;
         private static readonly CookieContainer CookieContainer;
-        private static string _baseUrl = "https://localhost:5289/api";
+        private static string _baseUrl = "http://localhost:5289/api";
+        private static readonly JsonSerializerOptions Options = new()
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
         static ApiService()
         {
@@ -23,7 +27,7 @@ namespace BikeShare.Desktop
             
             Client = new HttpClient(handler)
             {
-                Timeout = TimeSpan.FromSeconds(30)
+                Timeout = TimeSpan.FromSeconds(5)
             };
         }
 
@@ -34,22 +38,29 @@ namespace BikeShare.Desktop
 
         public static async Task<T?> GetAsync<T>(string endpoint)
         {
+            Console.WriteLine($"GET: '{endpoint}' ->");
             var response = await Client.GetAsync($"{_baseUrl}/{endpoint}");
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            var respContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"GET: '{endpoint}' <- {respContent}");
+            return JsonSerializer.Deserialize<T>(respContent, Options);
         }
 
         public static async Task<T?> PostAsync<T>(string endpoint, object data)
         {
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            Console.WriteLine($"POST: '{endpoint}' -> {content}");
             var response = await Client.PostAsync($"{_baseUrl}/{endpoint}", content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            var respContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"GET: '{endpoint}' <- {respContent}");
+            return JsonSerializer.Deserialize<T>(respContent, Options);
         }
 
         public static async Task<HttpResponseMessage> PostAsync(string endpoint, object data)
         {
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            Console.WriteLine($"POST: '{endpoint}' -> {content}");
             var response = await Client.PostAsync($"{_baseUrl}/{endpoint}", content);
             response.EnsureSuccessStatusCode();
             return response;
@@ -58,15 +69,27 @@ namespace BikeShare.Desktop
         public static async Task<T?> PutAsync<T>(string endpoint, object data)
         {
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            Console.WriteLine($"PUT: '{endpoint}' -> {content}");
             var response = await Client.PutAsync($"{_baseUrl}/{endpoint}", content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<T>();
+            var respContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"GET: '{endpoint}' <- {respContent}");
+            return JsonSerializer.Deserialize<T>(respContent, Options);
         }
 
         public static async Task<HttpResponseMessage> PutAsync(string endpoint, object data)
         {
             var content = new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json");
+            Console.WriteLine($"PUT: '{endpoint}' -> {content}");
             var response = await Client.PutAsync($"{_baseUrl}/{endpoint}", content);
+            response.EnsureSuccessStatusCode();
+            return response;
+        }
+        
+        public static async Task<HttpResponseMessage> DeleteAsync(string endpoint)
+        {
+            Console.WriteLine($"DELETE: '{endpoint}' ->");
+            var response = await Client.DeleteAsync($"{_baseUrl}/{endpoint}");
             response.EnsureSuccessStatusCode();
             return response;
         }

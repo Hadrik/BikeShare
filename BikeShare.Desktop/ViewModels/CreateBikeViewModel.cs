@@ -1,26 +1,23 @@
 ﻿using System.Windows;
-using BikeShare.Desktop.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
 namespace BikeShare.Desktop.ViewModels;
 
-public partial class EditStationViewModel : ObservableObject
+public partial class CreateBikeViewModel : ObservableObject
 {
+    public string[] Statuses { get; } =
+    [
+        "Available",
+        "Maintenance"
+    ];
+
     [ObservableProperty]
-    private Station _copy;
-
-    public EditStationViewModel(Station station)
-    {
-        Copy = new Station
-        {
-            Id = station.Id,
-            Name = station.Name,
-            Latitude = station.Latitude,
-            Longitude = station.Longitude
-        };
-    }
-
+    private string _selectedStatus = "";
+    
+    [ObservableProperty]
+    private int? _selectedStationId;
+    
     [RelayCommand]
     private void Cancel()
     {

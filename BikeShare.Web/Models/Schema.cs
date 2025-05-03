@@ -18,6 +18,9 @@ public record Station
     
     [Column("location_lat")]
     public double Longitude { get; set; }
+
+    [Column("status")]
+    public string Status { get; set; } = "Normal";
 }
 
 [Table("Bikes")]

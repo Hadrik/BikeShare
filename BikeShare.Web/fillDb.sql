@@ -10,14 +10,15 @@ create table if not exists Roles
     permissions integer not null
 );
 
-create table if not exists Stations
+create table Stations
 (
-    station_id    integer not null
+    station_id    integer               not null
         constraint Stations_pk
             primary key autoincrement,
-    name          text    not null,
-    location_lat  real    not null,
-    location_long real    not null
+    name          text                  not null,
+    location_lat  real                  not null,
+    location_long real                  not null,
+    status        text default 'Normal' not null
 );
 
 create table if not exists Bikes

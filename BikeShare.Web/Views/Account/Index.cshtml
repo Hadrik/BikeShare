@@ -23,7 +23,7 @@
     {
         <div class="detail-item">
             <h3 class="detail-header">From station</h3>
-            <h2 class="detail-content">@Model.StartStation.Name</h2>
+            <h2 class="detail-content">@Model.CurrentRental.StartStationName</h2>
         </div>
         <div class="detail-item">
             <h3 class="detail-header">Started at</h3>
@@ -31,3 +31,32 @@
         </div>
     }
 </div>
+@if (Model.PastRentals.Length != 0)
+{
+    <div class="history">
+        <table class="table">
+            <thead class="table-header">
+            <tr>
+                <th scope="col" class="table-header-text">From</th>
+                <th scope="col" class="table-header-text">To</th>
+            </tr>
+            <tr><th colspan="2" class="table-line"></th></tr>
+            </thead>
+            <tbody class="table-body">
+            @foreach (var rental in Model.PastRentals)
+            {
+                <tr class="table-row">
+                    <td class="table-cell">
+                        <h2 class="cell-name">@rental.StartStationName</h2>
+                        <h3 class="cell-time">@rental.StartTimestamp.ToString("dd/MM HH:mm")</h3>
+                    </td>
+                    <td class="table-cell">
+                        <h2 class="cell-name">@rental.EndStationName</h2>
+                        <h3 class="cell-time">@rental.EndTimestamp?.ToString("dd/MM HH:mm")</h3>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -16,13 +16,13 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
     {
         using var connection = db.CreateConnection();
         var now = DateTime.UtcNow;
-        
+
         var active = await connection.QuerySingleOrDefaultAsync<int>(
             "SELECT rental_id FROM Rentals WHERE user_id = @userId AND end_timestamp IS NULL",
             new { userId });
         if (active != 0)
             throw new Exception("User already has an active rental");
-        
+
         var bike = await connection.QuerySingleOrDefaultAsync<int>(
             "SELECT bike_id FROM Bikes WHERE station_id = @stationId AND status = @status ORDER BY RANDOM() LIMIT 1",
             new { stationId, status = "Available" });
@@ -42,7 +42,7 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
         {
             var rentalId = await connection.InsertAsync(rental, t);
             await bikeService.UpdateStatus(bike, "InUse", null, now, t);
-            
+
             t.Commit();
             return rentalId!.Value;
         }
@@ -52,7 +52,7 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
             throw new Exception("Failed to start rental", ex);
         }
     }
-    
+
     /// <summary>
     /// Finishes a rental. Updates the bike status, rental end time and cost.
     /// </summary>
@@ -62,10 +62,10 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
     /// <exception cref="Exception">Rental not found</exception>
     public async Task FinishRental(int rentalId, int stationId)
     {
-        var connection = db.CreateConnection();
-        var t = connection.BeginTransaction();
+        using var connection = db.CreateConnection();
+        using var t = connection.BeginTransaction();
         var now = DateTime.UtcNow;
-        
+
         var rental = await connection.GetAsync<Rental>(rentalId, t);
         if (rental == null)
         {
@@ -82,27 +82,58 @@ public class RentalService(DatabaseService db, BikeService bikeService, CostServ
             t.Rollback();
             throw new Exception("Failed to update bike status", ex);
         }
-        
+
         rental.EndStationId = stationId;
         rental.EndTimestamp = now;
         rental.Cost = costService.CalculateCost(rental.StartTimestamp, rental.EndTimestamp.Value);
-        
+
         var rows = await connection.UpdateAsync(rental, t);
         if (rows == 0)
         {
             t.Rollback();
             throw new Exception("Failed to finish rental");
         }
-        
+
         t.Commit();
     }
 
     public async Task<Rental?> GetRentalOfUser(int userId)
     {
-        var connection = db.CreateConnection();
+        using var connection = db.CreateConnection();
         var rental = await connection.QuerySingleOrDefaultAsync<Rental>(
             "SELECT rental_id AS Id, user_id, bike_id, start_station_id, end_station_id, start_timestamp, end_timestamp, cost FROM Rentals WHERE user_id = @userId AND end_timestamp IS NULL",
             new { userId });
         return rental;
+    }
+    
+    public async Task<ExtendedRental?> GetExtendedRentalOfUser(int userId)
+    {
+        using var connection = db.CreateConnection();
+        var rental = await connection.QuerySingleOrDefaultAsync<ExtendedRental>(
+            """
+            SELECT rental_id AS Id, user_id, bike_id, start_station_id, end_station_id, start_timestamp, end_timestamp, cost, s.name AS StartStationName
+            FROM Rentals r
+            JOIN Stations s ON s.station_id = r.start_station_id
+            WHERE user_id = @userId
+            AND end_timestamp IS NULL
+            """,
+            new { userId });
+        return rental;
+    }
+
+    public async Task<ExtendedRental[]> GetExtendedRentalHistoryOfUser(int userId)
+    {
+        using var connection = db.CreateConnection();
+        var rentals = await connection.QueryAsync<ExtendedRental>(
+            """
+            SELECT rental_id AS Id, user_id, bike_id, start_station_id, end_station_id, start_timestamp, end_timestamp, cost, s.name AS StartStationName, s2.name AS EndStationName
+            FROM Rentals r
+            JOIN Stations s ON s.station_id = r.start_station_id
+            JOIN Stations s2 ON s2.station_id = r.end_station_id
+            WHERE user_id = @userId
+            AND end_timestamp IS NOT NULL
+            """,
+            new { userId });
+        return rentals.ToArray();
     }
 }

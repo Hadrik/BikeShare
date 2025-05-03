@@ -52,3 +52,42 @@
     font-size: 1.2em;
     margin: 8px;
 }
+
+.history {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: var(--view-width);
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-top: 10px;
+}
+
+.table-line {
+    border-bottom: 1px solid #ccc;
+}
+
+.table-header-text {
+    color: var(--text-color);
+    font-size: 1.2em;
+}
+
+.table-cell {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.cell-name {
+    color: var(--text-color);
+    font-size: 1.3em;
+    margin: 8px 40px;
+}
+
+.cell-time {
+    color: var(--text-color);
+    font-weight: normal;
+    font-size: 0.9em;
+    margin: 8px;
+}

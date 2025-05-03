@@ -21,8 +21,16 @@
 
 .nav-username {
     color: var(--text-color);
-    padding-right: 20px;
     text-decoration: none;
+    padding-right: 10px;
     align-content: center;
-    /*cursor: ;*/
+    transition: 0.3s;
+
+    &:hover {
+        color: var(--accent-color);
+    }
+}
+
+.nav-right {
+    margin-right: 10px;
 }

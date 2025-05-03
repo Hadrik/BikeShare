@@ -25,19 +25,15 @@ public class AccountController(RentalService rentalService, StationService stati
             return BadRequest("User not found");
         }
         
-        var rental = await rentalService.GetRentalOfUser(userId);
-        Station? station = null;
-        if (rental != null)
-        {
-            station = await stationService.GetStation(rental.StartStationId);
-        }
+        var xrental = await rentalService.GetExtendedRentalOfUser(userId);
         
+        var rentalHistory = await rentalService.GetExtendedRentalHistoryOfUser(userId);
         
         return View(new AccountViewModel
         {
             Username = User.Identity?.Name,
-            CurrentRental = rental,
-            StartStation = station
+            CurrentRental = xrental,
+            PastRentals = rentalHistory
         });
     }
 }

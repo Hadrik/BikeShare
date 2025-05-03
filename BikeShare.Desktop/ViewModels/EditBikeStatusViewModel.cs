@@ -5,21 +5,28 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace BikeShare.Desktop.ViewModels;
 
-public partial class EditStationViewModel : ObservableObject
+public partial class EditBikeStatusViewModel(Bike bike) : ObservableObject
 {
-    [ObservableProperty]
-    private Station _copy;
-
-    public EditStationViewModel(Station station)
+    public Bike Original { get; } = bike;
+    public Bike Edit { get; set; } = new Bike()
     {
-        Copy = new Station
-        {
-            Id = station.Id,
-            Name = station.Name,
-            Latitude = station.Latitude,
-            Longitude = station.Longitude
-        };
-    }
+        Id = bike.Id,
+        LastUpdated = bike.LastUpdated,
+        StationId = bike.StationId,
+        Status = bike.Status
+    };
+    
+    public string[] Statuses { get; } =
+    [
+        "Available",
+        "Maintenance"
+    ];
+
+    [ObservableProperty]
+    private string _selectedStatus = "";
+    
+    [ObservableProperty]
+    private int? _selectedStationId;
 
     [RelayCommand]
     private void Cancel()
