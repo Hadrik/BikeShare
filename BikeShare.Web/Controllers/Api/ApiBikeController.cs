@@ -36,15 +36,20 @@ public class ApiBikeController(BikeService service) : ControllerBase
 
         return new JsonResult(bike);
     }
-    
+
+    public class UpdateStatusRequest
+    {
+        public string Status { get; set; } = string.Empty;
+        public int? StationId { get; set; } = -1;
+    }
     /// <summary>
     /// Manually update the status of a bike (usually used for maintenance)
     /// </summary>
     /// <param name="id">Bike ID</param>
-    /// <param name="status">[FromBody] New bike status</param>
+    /// <param name="request">[FromBody] {Status, StationId}</param>
     /// <returns>204-NoContent if update was successful or 400-BadRequest with error message</returns>
     [HttpPut("{id:int}/status")]
-    public async Task<IActionResult> UpdateStatus(int id, [FromBody] string status)
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateStatusRequest request)
     {
         if (!ModelState.IsValid)
         {
@@ -53,7 +58,7 @@ public class ApiBikeController(BikeService service) : ControllerBase
 
         try
         {
-            _ = await service.UpdateStatus(id, status);
+            _ = await service.UpdateStatus(id, request.Status, request.StationId);
             return NoContent();
         }
         catch (Exception e)

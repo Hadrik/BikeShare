@@ -52,11 +52,11 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// <summary>
     /// Start a new rental
     /// </summary>
-    /// <param name="request">{UserId, StationId}</param>
+    /// <param name="request">[FromBody] {UserId, StationId}</param>
     /// <returns>201-Created or 400-BadRequest</returns>
     [Authorize(Policy = "AdminOrApp")]
     [HttpPost("start")]
-    public async Task<IActionResult> Start(StartRentalRequest request)
+    public async Task<IActionResult> Start([FromBody] StartRentalRequest request)
     {
         try
         {
@@ -102,11 +102,11 @@ public class ApiRentalController(RentalService service) : ControllerBase
     /// <summary>
     /// End a rental
     /// </summary>
-    /// <param name="request">{RentalId, StationId}</param>
+    /// <param name="request">[FromBody] {RentalId, StationId}</param>
     /// <returns>204-NoContent or 400-BadRequest with error message</returns>
     [Authorize(Policy = "AdminOrApp")]
     [HttpPost("end")]
-    public async Task<IActionResult> End(EndRentalRequest request)
+    public async Task<IActionResult> End([FromBody] EndRentalRequest request)
     {
         try
         {
